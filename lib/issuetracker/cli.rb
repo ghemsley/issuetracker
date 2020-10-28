@@ -9,11 +9,14 @@ module Issuetracker
         opts.on('-p', '--project PROJECT_PATH', 'Path to the project to display or operate on') do |project_path|
           @options[:project_path] = project_path
         end
-        opts.on('-c', '--category ISSUE_CATEGORY', 'Name of the category to display or operate on. Requires -s, -n, -u, or -d') do |issue_name|
-          @options[:issue_name] = issue_name
+        opts.on('-c', '--category ISSUE_CATEGORY', 'Name of the category to display or operate on. Requires -s, -n, -u, or -d') do |issue_category|
+          @options[:category] = issue_category
         end
-        opts.on('-i', '--issue ISSUE_NAME', 'Name of the issue to operate on') do |issue_name|
-          @options[:issue_name] = issue_name
+        opts.on('-i', '--issue ISSUE_NAME', 'Name of the issue to operate on') do |name|
+          @options[:name] = name
+        end
+        opts.on('-e', '--explanation ISSUE_DESCRIPTION', 'Description of the issue') do |content|
+          @options[:content] = content
         end
         opts.on('-s', '--show', 'Display all the currently existing issues. Defaults to project in current directory unless used with -p. Cannot be used with -n or -d') do
           @options[:show] = true
