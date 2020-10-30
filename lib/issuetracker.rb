@@ -2,29 +2,15 @@ require 'issuetracker/version'
 require 'issuetracker/cli'
 require 'issuetracker/issue'
 require 'issuetracker/fileio'
+require 'issuetracker/project'
 module Issuetracker
   class Error < StandardError; end
-
+ # I moved around and modified the code you had in bin/issuetracker, because that file
+ # is just meant for making the program properly accessible via the shell. What you had
+ # makes more sense to put in here, and to keep the 'best practices' structure we should
+ # not modify bin/issuetracker much most likely, instead, program flow can be defined here
+ # and specific subroutines or constants can be defined in classes or methods in the files in lib/issuetracker.
   cli = CLI.new
-  puts "
-╔══════════════════════════════════════════════════════════════════╗
-
-  888                          88888                8               
-   8  d88b d88b 8   8 .d88b      8   8d8b .d88 .d8b 8.dP .d88b 8d8b 
-   8  `Yb. `Yb. 8b d8 8.dP'      8   8P   8  8 8    88b  8.dP' 8P   
-  888 Y88P Y88P `Y8P8 `Y88P      8   8    `Y88 `Y8P 8 Yb `Y88P 8    
-
-╚══════════════════════════════════════════════════════════════════╝
-
-┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐     ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐     ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
-     New Issue            View by Projects         Archived Issues
-     New or N               Project or P            Archived or A
-└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
-"
-  # input = gets.chomp
-  # input.downcase!
-  # if input != 'new' || 'n' || 'project' || 'p' || 'archived' || 'a' || 'exit'
-    # raise Error, "Sorry, that input looks invalid\nTry using the -h option flag for help"
-  # end
-
+  cli.main_menu
+  
 end

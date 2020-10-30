@@ -47,6 +47,14 @@ module Issuetracker
       @issuedescription = "A very important description"
       @status = "open"
 
+      # Hey @jessijoke - I think we might be duplicating some effort above?
+      # Check out the code in issue.rb and see if maybe it does some of what you are looking for?
+      # You can create a new issue instance with default values by requiring 'issuetracker/issue'
+      # at the top of this file and assigning Issue.new to a variable.
+      # Check out its methods, they each let you set an issue property and update the issue hash automatically.
+      # Let me know if you see any problems with this?
+      # ^ from @ghemsley ^
+
       puts "you made a bug hahaha"
       create_new_issue_1
       def create_new_issue_1
@@ -61,13 +69,18 @@ Input a name for your project or input -p or -projects to view current projects:
       end
       def create_new_issue_2
         print "Project Name: " + @projectname = gets.strip
-        #if @projectname.includes? bad characters we don't allow in project names like ?><~!@#$%^&^* -- return an error telling them to name the project without special characters and then call create_new_issue_2 again
+        # if @projectname.includes? bad characters we don't allow in project names like ?><~!@#$%^&^* -- return an error telling them to name the project without special characters and then call create_new_issue_2 again
 
-        #if json.includes?(@projectname) -- I don't know this code but it would go into the hash with that project's files
+        # if json.includes?(@projectname) -- I don't know this code but it would go into the hash with that project's files
 
-        #else
+        # else
 
-        #create a new hash for this project and add it to the new hash
+        # create a new hash for this project and add it to the new hash
+
+        # Hey @jessijoke - I tried to write something that might be suitable for that last comment in a new Project class.
+        # Check out project.rb and let me know if you have questions or concerns?
+        # ^ from @ghemsley ^
+
         create_new_issue_3
       end
         puts "
