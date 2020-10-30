@@ -8,13 +8,13 @@ module Issuetracker
 
     attr_accessor :path, :hash
 
-    def read(path = @path)
+    def readJSON(path = @path)
       @path = path
       @hash = JSON.parse(File.read(@path)) if File.exist?(@path)
       @hash
     end
 
-    def write(path = @path)
+    def writeJSON(path = @path)
       File.open(path, 'w') do |file|
         file.write(JSON.pretty_generate(@hash))
       end

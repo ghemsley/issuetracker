@@ -3,24 +3,116 @@ require 'issuetracker/version'
 module Issuetracker
   class CLI
     def initialize
-      @options = {}
-      OptionParser.new do |opts|
-        opts.banner = 'Usage: issuetracker [options]'
-        opts.on('-p', '--project PROJECT_PATH', 'Path to the project to display or operate on') do |project_path|
-          @options[:project_path] = project_path
-        end
-        
-        opts.on('-v', '--version', 'Display the program version. Overrides all other option behaviors') do
-          puts VERSION
-          exit
-        end
-        opts.on('-h', '--help', 'Displays a helpful usage guide') do
-          puts opts
-          exit
-        end
-      end.parse!
+
+      main_menu
     end
 
-    attr_reader :options
+    def main_menu
+      puts "
+╔══════════════════════════════════════════════════════════════════╗
+
+  888                          88888                8               
+   8  d88b d88b 8   8 .d88b      8   8d8b .d88 .d8b 8.dP .d88b 8d8b 
+   8  `Yb. `Yb. 8b d8 8.dP'      8   8P   8  8 8    88b  8.dP' 8P   
+  888 Y88P Y88P `Y8P8 `Y88P      8   8    `Y88 `Y8P 8 Yb `Y88P 8    
+
+╚══════════════════════════════════════════════════════════════════╝
+
+┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐     ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐     ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+     New Issue            View by Projects         Archived Issues
+     New or N               Project or P            Archived or A
+└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+"
+      main_menu_input
+    end
+    
+    def main_menu_input
+      @main_menu_input = gets.strip.downcase
+      if @main_menu_input == "new" || @main_menu_input == "n"
+        new_issue
+      elsif @main_menu_input == "project" || @main_menu_input == "p"
+        current_projects
+      elsif @main_menu_input == "archived" || @main_menu_input == "a"
+        archived_projects
+      else
+        puts "Please make a valid entry. (New/N, Project/P, Archived/A)"
+        main_menu_input
+      end
+    end
+
+    def new_issue
+      #temp vars to let code work
+      @issuenumber = 1
+      @projectname = "Very Important Project"
+      @issuedescription = "A very important description"
+      @status = "open"
+
+      puts "you made a bug hahaha"
+      create_new_issue_1
+      def create_new_issue_1
+        #Get issue # from json, issue # is number of bugs + 1
+        puts "
+╔═══════════════════╗
+  Issue: #{@issuenumber} 
+╚═══════════════════╝
+Input a name for your project or input -p or -projects to view current projects:
+"
+        create_new_issue_2
+      end
+      def create_new_issue_2
+        print "Project Name: " + @projectname = gets.strip
+        #if @projectname.includes? bad characters we don't allow in project names like ?><~!@#$%^&^* -- return an error telling them to name the project without special characters and then call create_new_issue_2 again
+
+        #if json.includes?(@projectname) -- I don't know this code but it would go into the hash with that project's files
+
+        #else
+
+        #create a new hash for this project and add it to the new hash
+        create_new_issue_3
+      end
+        puts "
+╔═══════════════════╗
+  Issue: #{@issuenumber} 
+╚═══════════════════╝
+Project: #{@projectname}
+Input a description for your project issue:
+"
+        puts "
+╔═══════════════════╗
+  Issue: #{@issuenumber} 
+╚═══════════════════╝
+Project: #{@projectname}
+Description: #{@issuedescription}
+Input a status for your issue (Active/Solved/Wont Solve): 
+"
+      puts "
+╔═══════════════════╗
+  Issue: #{@issuenumber} 
+╚═══════════════════╝
+Project: #{@projectname}
+Description: #{@issuedescription}
+Status: #{@status}
+
+┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐ ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐ ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐ ┌╌╌╌╌╌╌╌╌╌╌┐
+    Edit Project      Edit Description       Edit Status         Delete
+    Project or P      Description or D       Status or S          Del
+└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘ └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘ └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘ └╌╌╌╌╌╌╌╌╌╌┘
+"
+      puts "
+╔═══════════════════╗
+      !WARNING!
+╚═══════════════════╝
+Are you sure you want to delete Issue #{@issuenumber}? This change is permanent and cannot be undone. (y/n)
+"
+    end
+
+    def current_projects
+      puts "This is all the projects"
+    end
+
+    def archived_projects
+      puts "Welcome to warehouse 13"
+    end
+    #attr_reader :options
   end
 end

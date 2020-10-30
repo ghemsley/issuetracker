@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
-
 require "bundler/setup"
 require "issuetracker"
+
+session = issuetracker.new
+
+session.main_menu
+

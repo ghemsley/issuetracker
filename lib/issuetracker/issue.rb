@@ -1,28 +1,34 @@
 module Issuetracker
   class Issue
-    def initialize(name = 'New Issue', category = 'Issue', content = 'Description of the issue')
+    def initialize(name = 'New Issue', project = 'Default project', status = 'Active', description = 'Description of the issue')
       @name = name
-      @category = category
-      @content = content
-      @hash = { 'Name' => @name, 'Category' => @category, 'Description' => @content }
+      @project = project
+      @status = status
+      @description = description
+      @hash = { 'Name' => @name, 'Project' => @project, 'Status' => @status, 'Description' => @description }
     end
-
+    
     attr_accessor :hash
-    attr_reader :name, :category, :content
+    attr_reader :name, :project, :status, :description
 
     def setname(name)
       @name = name
       @hash['Name'] = @name
     end
 
-    def setcategory(category)
-      @category = category
-      @hash['Category'] = @category
+    def setproject(project)
+      @project = project
+      @hash['Project'] = @project
     end
 
-    def setcontent(content)
-      @content = content
-      @hash['Description'] = @content
+    def setstatus(status)
+      @status = status
+      @hash['Status'] = @status
+    end
+
+    def setdescription(description)
+      @description = description
+      @hash['Description'] = @description
     end
   end
 end

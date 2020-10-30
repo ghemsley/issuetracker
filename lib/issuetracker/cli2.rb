@@ -1,12 +1,10 @@
+require 'optparse'
 require 'issuetracker/version'
-require 'issuetracker/cli'
-require 'issuetracker/issue'
-require 'issuetracker/fileio'
 module Issuetracker
-  class Error < StandardError; end
-
-  cli = CLI.new
-  puts "
+  class CLI
+    def initialize
+      OptionParser.new do |opts|
+        opts.banner = "
 ╔══════════════════════════════════════════════════════════════════╗
 
   888                          88888                8               
@@ -20,11 +18,18 @@ module Issuetracker
      New Issue            View by Projects         Archived Issues
      New or N               Project or P            Archived or A
 └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
-"
-  # input = gets.chomp
-  # input.downcase!
-  # if input != 'new' || 'n' || 'project' || 'p' || 'archived' || 'a' || 'exit'
-    # raise Error, "Sorry, that input looks invalid\nTry using the -h option flag for help"
-  # end
+"       
+        opts.on('-v', '--version', 'Display the program version. Overrides all other option behaviors') do
+          puts VERSION
+          exit
+        end
+        opts.on('-h', '--help', 'Displays a helpful usage guide') do
+          puts opts
+          exit
+        end
+      end.parse!
+    end
 
+    attr_reader :options
+  end
 end
