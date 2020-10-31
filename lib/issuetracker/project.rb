@@ -10,13 +10,14 @@ module Issuetracker
   # the 'addissue' methods are special as it doesn't overwrite the @issues variable, instead it adds/removes a key to or from
   # the @issues hash then appends the @issues hash to project.hash automatically, attempting to update the issue numbers if necessary.
   class Project
-    def initialize(name = 'New Project', number = 1, description = 'Description of the project', path = './', issues = {})
+    def initialize(name = 'New Project', number = 1, description = 'Description of the project', path = './', issue_count = 0, issues = {})
       @name = name
       @number = number
       @description = description
       @path = path
+      @issue_count = issue_count
       @issues = issues
-      @hash = { 'Name' => @name, 'Number' => @number, 'Description' => @description, 'Path' => @path, 'Issues' => @issues }
+      @hash = { 'Name' => @name, 'Number' => @number, 'Description' => @description, 'Path' => @path, 'Issue count' => issue_count, 'Issues' => @issues }
     end
 
     attr_accessor :hash
@@ -53,6 +54,7 @@ module Issuetracker
         end
       end
       @issues[issue_number] = issue
+      @issue_count += 1
       @hash['Issues'] = @issues
     end
 
@@ -62,6 +64,7 @@ module Issuetracker
       @issues = @issues.collect do |key, value|
         key -= 1 if key.instance_of?(Integer) && value.instance_of?(Hash) && key > issue_number && key > 1
       end
+      @issue_count -= 1
       @hash['Issues'] = @issues
     end
   end
