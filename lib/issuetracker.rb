@@ -13,8 +13,14 @@ module Issuetracker
   # and specific subroutines or constants can be defined in classes or methods in the files in lib/issuetracker.
   file = FileIO.new
   all_projects = AllProjects.new
-  all_projects.hash = file.read_json if File.exist?(file.path)
-  puts all_projects.hash.display
+  if File.exist?(file.path)
+    all_projects.hash = file.read_json
+    all_projects.hash = all_projects.hash.transform_keys(&:to_sym)
+    if all_projects.hash[:Projects].length > 0
+      all_projects.projects_array = all_projects.hash[:Projects]
+      all_projects.project_count = all_projects.projects_array.length
+    end
+  end
   cli = CLI.new
   cli.main_menu
   cli.main_menu_input
@@ -26,14 +32,18 @@ module Issuetracker
     issue.setproject(issue_definition['Project name'])
     issue.setdescription(issue_definition['Description'])
     issue.setstatus(issue_definition['Status'])
-    puts issue.hash.display
-    project = Project.new
-    project.setname(issue_definition['Project name'])
-    project.setpath(Dir.pwd)
-    project.addissue(issue.hash)
-    puts project.hash.display
-    all_projects.addproject(project.hash) if all_projects.hash[project.number].nil?
-    puts all_projects.hash.display
+    project = all_projects.projects_array.find do |project|
+      project[:Name] == issue_definition['Project name']
+    end
+    if project.nil?
+      project = Project.new
+      project.setname(issue_definition['Project name'])
+      project.addissue(issue.hash)
+      all_projects.addproject(project.hash)
+    else
+      project.addissue(issue.hash)
+      all_projects.updateproject(project.hash)
+    end
     file.hash = all_projects.hash
     file.write_json
   end

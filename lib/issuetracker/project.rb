@@ -10,64 +10,54 @@ module Issuetracker
   # the 'addissue' methods are special as it doesn't overwrite the @issues variable, instead it adds/removes a key to or from
   # the @issues hash then appends the @issues hash to project.hash automatically, attempting to update the issue numbers if necessary.
   class Project
-    def initialize(name = 'New Project', number = 1, description = 'Description of the project', path = './', issue_count = 0, issues = {})
+    def initialize(name = 'New Project', number = 0, description = 'Description of the project', path = Dir.pwd, issues_array = [])
       @name = name
       @number = number
       @description = description
       @path = path
-      @issue_count = issue_count
-      @issues = issues
-      @hash = { 'Name' => @name, 'Number' => @number, 'Description' => @description, 'Path' => @path, 'Issue count' => @issue_count, 'Issues' => @issues }
+      @issues_array = issues_array
+      @issue_count = @issues_array.length
+      @hash = { Name: @name, Number: @number, Description: @description, Path: @path, Issue_count: @issue_count, Issues: @issues_array }
     end
 
-    attr_accessor :hash
-    attr_reader :name, :number, :description, :path, :issue_count, :issues
+    attr_accessor :hash, :issues_array
+    attr_reader :name, :number, :description, :path, :issue_count
 
     def setname(name)
       @name = name
-      @hash['Name'] = @name
+      @hash[:Name] = @name
     end
 
     def setnumber(number)
       @number = number
-      @hash['Number'] = @number
+      @hash[:Number] = @number
     end
 
     def setdescription(description)
       @description = description
-      @hash['Description'] = @description
+      @hash[:Description] = @description
     end
 
     def setpath(path)
       @path = path
-      @hash['Path'] = @path
+      @hash[:Path] = @path
     end
 
     def addissue(issue)
-      issue_number = issue['Number']
-      if @issues != {}
-        while @issues[issue_number].exists?
-          issue_number = @issues.find do |key, value|
-            key.instance_of?(Integer) && value.instance_of?(Hash) && key >= issue_number
-          end
-          issue_number += 1
-        end
-      end
-      @issues[issue_number] = issue
-      @issue_count += 1
-      @hash['Issues'] = @issues
-      @hash['Issue count'] = @issue_count
+      @issues_array.push(issue)
+      @issue_count = @issues_array.length 
+      issue[:Number] = @issue_count
+      @hash[:Issues] = @issues_array
+      @hash[:Issue_count] = @issue_count
     end
 
     def removeissue(issue)
-      issue_number = issue['Number']
-      @issues.delete(issue_number) if @issues[issue_number].exists?
-      @issues = @issues.collect do |key, value|
-        key -= 1 if key.instance_of?(Integer) && value.instance_of?(Hash) && key > issue_number && key > 1
-      end
-      @issue_count -= 1
-      @hash['Issues'] = @issues
-      @hash['Issue count'] = @issue_count
+      issue_number = issue[:Number]
+      @issues_array.delete_at(issue_number)
+      issue[:Number] -= 1 unless issue[:Number] < 1
+      @issue_count = @issues_array.length
+      @hash[:Issues] = @issues_array
+      @hash[:Issue_count] = @issue_count
     end
   end
 end

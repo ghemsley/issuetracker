@@ -1,3 +1,71 @@
+#===============================================
+#Current Issue Map
+#===============================================
+#Main Menu for View Current Issues
+
+puts"
+View Current Issues By:
+┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐ ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐ ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+      Projects             Issue #               All         
+    Project or P         Issue or I            All or A       
+└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘ └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘ └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+"
+#Selecting Projects should bring up a list of projects to select from to view Issues for
+
+
+project1          project5          project9
+project2          project6          project10
+project3          project7          project11
+project4          project8          project12
+puts "Select a Project from the list to view Issues associated with that project."
+>
+
+#Selecting issue number should prompt you to type an issue number
+
+puts "Input an issue number to view the Issue associated with that number."
+>
+
+
+#Selecting All should display all issues logged in the format established during input
+#each_with_index? 
+
+puts "
+╔═══════════════════╗
+  Issue: 1
+╚═══════════════════╝
+Project: Issue Tracker
+Description: Can't increment count
+Status: open
+
+╔═══════════════════╗
+  Issue: 2
+╚═══════════════════╝
+Project: My project
+Description: My description
+Status: open
+
+╔═══════════════════╗
+  Issue: 3
+╚═══════════════════╝
+Project: My project
+Description: My description
+Status: open
+
+"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 puts "
    __   __        ___    ___  __        __        ___  __  
 | /__` /__` |  | |__      |  |__)  /\  /  ` |__/ |__  |__) 

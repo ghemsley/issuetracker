@@ -10,15 +10,14 @@ module Issuetracker
   # the 'addissue' methods are special as it doesn't overwrite the @issues variable, instead it adds/removes a key to or from
   # the @issues hash then appends the @issues hash to project.hash automatically, attempting to update the issue numbers if necessary.
   class AllProjects
-    def initialize(path = "#{Dir.home}/.issuetracker", project_count = 0, projects = {})
+    def initialize(path = "#{Dir.home}/.issuetracker", project_count = 0, projects_array = [], hash = {})
       @path = path
-      @project_count = project_count
-      @projects = projects
-      @hash = { 'Path' => @path, 'Project count' => @project_count, 'Projects' => @projects }
+      @projects_array = projects_array
+      @project_count = @projects_array.length
+      @hash = { Path: @path, Project_count: @project_count, Projects: @projects_array }
     end
 
-    attr_accessor :hash
-    attr_reader :path, :project_count, :projects
+    attr_accessor :path, :projects_array, :project_count, :hash
 
     def setpath(path)
       @path = path
@@ -26,40 +25,26 @@ module Issuetracker
     end
 
     def addproject(project)
-      project_number = project['Number']
-      if @projects != {}
-        while @projects[project_number].exists?
-          project_number = @projects.find do |key, value|
-            key.instance_of?(Integer) && value.instance_of?(Hash) && key >= project_number
-          end
-          project_number += 1
-        end
-      end
-      @projects[project_number] = project
-      @project_count += 1
-      @hash['Projects'].merge(@projects)
-      @hash['Project count'] = @project_count
+      @projects_array.push(project)
+      @hash[:Projects] = @projects_array
+      @project_count = projects_array.length
+      project[:Number] = @project_count
+      @hash[:Project_count] = @project_count
     end
 
     def updateproject(project)
-      project_number = project['Number']
-      if !@projects[project_number].nil?
-        @projects[project_number].merge(project)
-      else
-        @projects[project_number] = project
-      end
-      @hash['Projects'][project_number] = project
+      project_number = project[:Number]
+      @projects_array[project_number] = project
+      @hash[:Projects] = @projects_array
     end
 
     def removeproject(project)
-      project_number = project['Number']
-      @projects.delete(project_number) if @projects[project_number].exists?
-      @projects = @projects.collect do |key, value|
-        key -= 1 if key.instance_of?(Integer) && value.instance_of?(Hash) && key > project_number && key > 1
-      end
-      @project_count -= 1
-      @hash['Projects'] = @projects
-      @hash['Project count'] = @project_count
+      project_number = project[:Number]
+      @projects_array.delete_at(project_number)
+      @project_count = @projects_array.length
+      project[:Number] -= 1 unless project[:Number] < 1
+      @hash[:Projects] = @projects_array
+      @hash[:Project_count] = @project_count
     end
   end
 end
