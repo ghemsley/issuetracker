@@ -9,7 +9,7 @@ module Issuetracker
     # optionally be overriden to specify a custom path to read or write from.
     # While the class can be instantiated with a path or not (in which case the default will be used),
     # the methods can have that initial path be overridden by passing a new path in when the method is called.
-    def initialize(hash = {}, path = '~/.issuetracker')
+    def initialize(hash = {}, path = "#{Dir.home}/.issuetracker")
       @hash = hash
       @path = path
     end

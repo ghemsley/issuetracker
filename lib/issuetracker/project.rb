@@ -17,11 +17,11 @@ module Issuetracker
       @path = path
       @issue_count = issue_count
       @issues = issues
-      @hash = { 'Name' => @name, 'Number' => @number, 'Description' => @description, 'Path' => @path, 'Issue count' => issue_count, 'Issues' => @issues }
+      @hash = { 'Name' => @name, 'Number' => @number, 'Description' => @description, 'Path' => @path, 'Issue count' => @issue_count, 'Issues' => @issues }
     end
 
     attr_accessor :hash
-    attr_reader :name, :number, :description, :path
+    attr_reader :name, :number, :description, :path, :issue_count, :issues
 
     def setname(name)
       @name = name
@@ -46,7 +46,7 @@ module Issuetracker
     def addissue(issue)
       issue_number = issue['Number']
       if @issues != {}
-        while @issues[number].exists?
+        while @issues[issue_number].exists?
           issue_number = @issues.find do |key, value|
             key.instance_of?(Integer) && value.instance_of?(Hash) && key >= issue_number
           end
@@ -56,6 +56,7 @@ module Issuetracker
       @issues[issue_number] = issue
       @issue_count += 1
       @hash['Issues'] = @issues
+      @hash['Issue count'] = @issue_count
     end
 
     def removeissue(issue)
@@ -66,6 +67,7 @@ module Issuetracker
       end
       @issue_count -= 1
       @hash['Issues'] = @issues
+      @hash['Issue count'] = @issue_count
     end
   end
 end
