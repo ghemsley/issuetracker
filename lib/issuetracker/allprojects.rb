@@ -15,10 +15,15 @@ module Issuetracker
       @path = path
       @projects_array = projects_array
       @project_count = @projects_array.length
+      @total_issue_count = 0
+      @projects_array.each do |project_element|
+        @total_issue_count += project_element[:Issue_count] unless project_element[:Issue_count].nil?
+      end
       @hash = { Path: @path, Project_count: @project_count, Projects: @projects_array }
     end
 
     attr_accessor :path, :projects_array, :project_count, :hash
+    attr_reader :total_issue_count
 
     def normalize_self
       @hash.transform_keys! do |key|
@@ -37,6 +42,9 @@ module Issuetracker
         end
       end
       @projects_array = @hash[:Projects]
+      @projects_array.each do |project_element|
+        @total_issue_count += project_element[:Issue_count] unless project_element[:Issue_count].nil?
+      end
       @project_count = @projects_array.length
     end
 

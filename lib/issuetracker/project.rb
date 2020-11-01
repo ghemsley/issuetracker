@@ -12,7 +12,7 @@ module Issuetracker
   # the issue numbers if necessary.
   class Project
     def initialize(
-      name = 'New Project',
+      name = nil,
       number = 0,
       description = 'Description of the project',
       path = Dir.pwd,

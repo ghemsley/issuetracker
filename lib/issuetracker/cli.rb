@@ -1,12 +1,33 @@
 module Issuetracker
   class CLI
-    def initialize(issue_count = 1)
+    def initialize(
+      issue_count = 0,
+      existing_projects = [],
+      project_name_input = 'Project name',
+      issue_description_input = 'Issue description',
+      issue_status_input = 'Issue status'
+    )
       @main_menu_selection = nil
       @new_issue_selection = {}
       @issue_count = issue_count
+      # for checking project name against existing projects
+      @current_path = Dir.pwd
+      @existing_projects = existing_projects
+      # new issue input
+      @project_name_input = project_name_input
+      @issue_description_input = issue_description_input
+      @issue_status_input = issue_status_input
     end
 
-    attr_reader :main_menu_selection, :new_issue_selection, :issue_count
+    attr_accessor :issue_count,
+                  :existing_project_paths
+
+    attr_reader :main_menu_selection,
+                :new_issue_selection,
+                :current_path,
+                :project_name_input,
+                :issue_description_input,
+                :issue_status_input
 
     def main_menu
       puts "
@@ -22,18 +43,17 @@ module Issuetracker
 ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐     ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐     ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
      New Issue            View by Projects         Archived Issues
      New or N               Project or P            Archived or A
-└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
-"
+└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘     └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘"
     end
 
     def main_menu_input
       @main_menu_selection = gets.strip.downcase
-      if @main_menu_selection == 'new' || @main_menu_selection == 'n'
+      if %w[n new].include?(@main_menu_selection)
         @main_menu_selection
-      elsif @main_menu_selection == 'project' || @main_menu_selection == 'p'
+      elsif %w[p project].include?(@main_menu_selection)
         # view by projects
         @main_menu_selection
-      elsif @main_menu_selection == 'archived' || @main_menu_selection == 'a'
+      elsif %w[a archived].include?(@main_menu_selection)
         # view by archived status
         puts 'Archived issues'
         @main_menu_selection
@@ -44,50 +64,57 @@ module Issuetracker
       @main_menu_selection
     end
 
-    def new_issue_menu
-      puts "
-╔═══════════════════╗
-  Issue: #{@issue_count}
-╚═══════════════════╝
-Input a name for your project or input -p or -projects to view current projects:
-"
-      project_name_input = gets.strip
-      puts "
-╔═══════════════════╗
-  Issue: #{@issue_count}
-╚═══════════════════╝
-Project: #{project_name_input}
-Input a description for your project issue:
-      "
-      desc_input = gets.strip
-      check_status_input = lambda do
-        puts "
-╔═══════════════════╗
-  Issue: #{@issue_count}
-╚═══════════════════╝
-Project: #{project_name_input}
-Description: #{desc_input}
-Input a status for issue (Open/Closed/Later):
-      "
-        status_input = gets.strip.downcase
-        unless %w[open closed later].include?(status_input)
-          puts 'Please select a status of Open, Closed, or Later'
-          check_status_input.call
-        end
-        return status_input
+    def new_issue_banner
+      puts '╔═══════════════════╗'
+      puts "   Issue number: #{@issue_count}"
+      puts '╚═══════════════════╝'
+    end
+
+    def get_project_name_input
+      @existing_projects.each do |project_element|
+        return project_element[:Name] if project_element[:Path] == @current_path && !project_element[:Name].nil?
       end
-      status_input = check_status_input.call
-      puts "
-╔═══════════════════╗
-  Issue: #{@issue_count}
-╚═══════════════════╝
-Project: #{project_name_input}
-Description: #{desc_input}
-Status: #{status_input}
-"
-      @new_issue_selection['Project name'] = project_name_input
-      @new_issue_selection['Description'] = desc_input
-      @new_issue_selection['Status'] = status_input
+      new_issue_banner
+      puts 'Input a name for your project or input -p or -projects to view current projects: '
+      @project_name_input = gets.strip
+      taken = @existing_projects.find do |project_element|
+        project_element[:Name] == @project_name_input && project_element[:Path] != @current_path
+      end
+      if taken
+        puts "The name '#{@project_name_input}' is taken by another project."
+        puts 'Please choose a different name for your project.'
+        get_issue_name_input
+      end
+      @project_name_input
+    end
+
+    def get_issue_status_input
+      new_issue_banner
+      puts "Project: #{@project_name_input}"
+      puts "Description: #{@issue_description_input}"
+      puts 'Input a status for issue (Open/Closed/Later): '
+      @issue_status_input = gets.strip
+      unless %w[open closed later].include?(@issue_status_input.downcase)
+        puts 'Please select a status of Open, Closed, or Later'
+        get_issue_status_input
+      end
+      @issue_status_input
+    end
+
+    def new_issue_menu
+      @issue_count += 1
+      @project_name_input = get_project_name_input
+      puts "Project: #{@project_name_input}"
+      puts 'Input a description for your project issue:'
+      @issue_description_input = gets.strip
+      @issue_status_input = get_issue_status_input
+      new_issue_banner
+      puts "Project: #{@project_name_input}"
+      puts "Description: #{@issue_description_input}"
+      puts "Status: #{@issue_status_input}"
+      @new_issue_selection['Project name'] = @project_name_input
+      @new_issue_selection['Description'] = @issue_description_input
+      @new_issue_selection['Status'] = @issue_status_input
       @new_issue_selection
     end
   end

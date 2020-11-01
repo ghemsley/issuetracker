@@ -17,7 +17,7 @@ module Issuetracker
     all_projects.hash = file.read_json
     all_projects.normalize_self
   end
-  cli = CLI.new
+  cli = CLI.new(all_projects.total_issue_count, all_projects.projects_array)
   cli.main_menu
   cli.main_menu_input
   main_menu_selection = cli.main_menu_selection
