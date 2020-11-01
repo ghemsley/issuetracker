@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # This file does everything needed to setup the issuetracker module namespace
 # and it automatically runs the code in lib/issuetracker.rb. So, if you want
-# to call our methods and classes at program launch, that code should go in 
+# to call our methods and classes at program launch, that code should go in
 # lib/issuetracker.rb :)
-require "bundler/setup"
-require "issuetracker"
+require 'bundler/setup'
+require 'issuetracker'

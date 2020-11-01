@@ -15,11 +15,7 @@ module Issuetracker
   all_projects = AllProjects.new
   if File.exist?(file.path)
     all_projects.hash = file.read_json
-    all_projects.hash = all_projects.hash.transform_keys(&:to_sym)
-    if all_projects.hash[:Projects].length > 0
-      all_projects.projects_array = all_projects.hash[:Projects]
-      all_projects.project_count = all_projects.projects_array.length
-    end
+    all_projects.normalize_self
   end
   cli = CLI.new
   cli.main_menu
@@ -32,15 +28,19 @@ module Issuetracker
     issue.setproject(issue_definition['Project name'])
     issue.setdescription(issue_definition['Description'])
     issue.setstatus(issue_definition['Status'])
-    project = all_projects.projects_array.find do |project|
-      project[:Name] == issue_definition['Project name']
+    project = Project.new
+    project.setname(issue_definition['Project name'])
+    project_hash = all_projects.projects_array.find do |element|
+      element[:Name] == issue.project
     end
-    if project.nil?
-      project = Project.new
-      project.setname(issue_definition['Project name'])
+    if project_hash.nil?
       project.addissue(issue.hash)
       all_projects.addproject(project.hash)
     else
+      project.hash = project_hash
+      project.hash[:Issues].each do |element|
+        project.addissue(element)
+      end
       project.addissue(issue.hash)
       all_projects.updateproject(project.hash)
     end

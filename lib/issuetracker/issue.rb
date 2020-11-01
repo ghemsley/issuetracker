@@ -1,14 +1,20 @@
 module Issuetracker
   class Issue
-  # This class defines the structure of the 'Issue' hash object.
-  # It initializes with default values that can be overridden by specifying ordered arguments at object instantiation.
-  # Properties can be read using code such as issue = Issue.new; status = issue.status
-  # Properties should be updated using the set methods defined in the class
-  # because these methods will properly update the hash object while trying to modify the properties
-  # directly will not.
-  # The hash object can be modified directly if specifically needed but it is still recommendeded to use
-  # the setter methods whenever possible instead.
-    def initialize(name = 'New Issue', number = 0, project = 'Default project', status = 'Open', description = 'Description of the issue')
+    # This class defines the structure of the 'Issue' hash object.
+    # It initializes with default values that can be overridden by specifying ordered arguments at object instantiation.
+    # Properties can be read using code such as issue = Issue.new; status = issue.status
+    # Properties should be updated using the set methods defined in the class
+    # because these methods will properly update the hash object while trying to modify the properties
+    # directly will not.
+    # The hash object can be modified directly if specifically needed but it is still recommendeded to use
+    # the setter methods whenever possible instead.
+    def initialize(
+      name = 'New Issue',
+      number = 0,
+      project = 'Default project',
+      status = 'Open',
+      description = 'Description of the issue'
+    )
       @name = name
       @number = number
       @project = project
