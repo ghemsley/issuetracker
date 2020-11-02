@@ -4,6 +4,8 @@ module Issuetracker
       issue_count = 0,
       existing_projects = [],
       project_name_input = 'Project name',
+      project_description_input = 'Project description',
+      issue_name_input = 'Issue name',
       issue_description_input = 'Issue description',
       issue_status_input = 'Issue status'
     )
@@ -15,6 +17,8 @@ module Issuetracker
       @existing_projects = existing_projects
       # new issue input
       @project_name_input = project_name_input
+      @project_description_input = project_description_input
+      @issue_name_input = issue_name_input
       @issue_description_input = issue_description_input
       @issue_status_input = issue_status_input
     end
@@ -26,10 +30,12 @@ module Issuetracker
                 :new_issue_selection,
                 :current_path,
                 :project_name_input,
+                :issue_name_input,
                 :issue_description_input,
                 :issue_status_input
 
     def main_menu
+      system 'clear'
       puts "
 ╔══════════════════════════════════════════════════════════════════╗
 
@@ -74,26 +80,99 @@ module Issuetracker
       @existing_projects.each do |project_element|
         return project_element[:Name] if project_element[:Path] == @current_path && !project_element[:Name].nil?
       end
+      system 'clear'
       new_issue_banner
       puts 'Input a name for your project or input -p or -projects to view current projects: '
-      @project_name_input = gets.strip
+      @project_name_input = gets.strip.capitalize
       taken = @existing_projects.find do |project_element|
-        project_element[:Name] == @project_name_input && project_element[:Path] != @current_path
+        project_element[:Name].downcase == @project_name_input.downcase && project_element[:Path] != @current_path
       end
       if taken
         puts "The name '#{@project_name_input}' is taken by another project."
-        puts 'Please choose a different name for your project.'
-        get_issue_name_input
+        puts 'Please choose a different name for your project,'
+        puts 'or navigate to the directory containing the existing project'
+        puts 'and run Issuetracker again to modify that project\'s issues.'
+        get_project_name_input
       end
       @project_name_input
     end
 
-    def get_issue_status_input
+    def get_project_description_input
+      @existing_projects.each do |project_element|
+        if project_element[:Path] == @current_path && !project_element[:Description].nil?
+          return project_element[:Description]
+        end
+      end
+      system 'clear'
       new_issue_banner
-      puts "Project: #{@project_name_input}"
-      puts "Description: #{@issue_description_input}"
-      puts 'Input a status for issue (Open/Closed/Later): '
-      @issue_status_input = gets.strip
+      puts "Project name: #{@project_name_input}"
+      puts 'Input a description for your project:'
+      @project_description_input = gets.strip.capitalize
+      taken = @existing_projects.find do |project_element|
+        project_element[:Description].downcase == @project_description_input.downcase && project_element[:Path] != @current_path
+      end
+      if taken
+        puts "The description '#{@project_description_input}' matches another project."
+        puts 'Please choose a different description for your project,'
+        puts 'or navigate to the directory containing the existing project'
+        puts 'and run Issuetracker again to modify that project\'s issues.'
+        get_project_description_input
+      end
+      @project_description_input
+    end
+
+    def get_issue_name_input
+      system 'clear'
+      new_issue_banner
+      puts "Project name: #{@project_name_input}"
+      puts "Project description: #{@project_description_input}"
+      puts 'Input a name for your issue:'
+      @issue_name_input = gets.strip.capitalize
+      matching = false
+      @existing_projects.each do |project_element|
+        matching = project_element[:Issues].find do |issue_element|
+          issue_element[:Name].downcase == @issue_name_input.downcase
+        end
+      end
+      if matching
+        puts "The name '#{@issue_name_input}' matches an existing issue in this project."
+        puts 'Please choose a different name for your issue.'
+        get_issue_name_input
+      end
+      @issue_name_input
+    end
+
+    def get_issue_description_input
+      system 'clear'
+      new_issue_banner
+      puts "Project name: #{@project_name_input}"
+      puts "Project description: #{@project_description_input}"
+      puts "Issue name: #{@issue_name_input}"
+      puts 'Input a description for your issue:'
+      @issue_description_input = gets.strip.capitalize
+      matching = false
+      @existing_projects.each do |project_element|
+        matching = project_element[:Issues].find do |issue_element|
+          issue_element[:Description].downcase == @issue_description_input.downcase
+        end
+      end
+      if matching
+        puts "The description '#{@issue_description_input}' matches an existing issue in this project."
+        puts 'Please choose a different description for your issue.'
+        get_issue_description_input
+      end
+      @issue_description_input
+    end
+
+    def get_issue_status_input
+      system 'clear'
+      new_issue_banner
+      puts "Project name: #{@project_name_input}"
+      puts "Project description: #{@project_description_input}"
+      puts "Issue name: #{@issue_name_input}"
+      puts "Issue description: #{@issue_description_input}"
+      puts 'Input a status for the issue (Open/Closed/Later):'
+      @issue_status_input = gets.strip.capitalize
       unless %w[open closed later].include?(@issue_status_input.downcase)
         puts 'Please select a status of Open, Closed, or Later'
         get_issue_status_input
@@ -104,17 +183,22 @@ module Issuetracker
     def new_issue_menu
       @issue_count += 1
       @project_name_input = get_project_name_input
-      puts "Project: #{@project_name_input}"
-      puts 'Input a description for your project issue:'
-      @issue_description_input = gets.strip
+      @project_description_input = get_project_description_input
+      @issue_name_input = get_issue_name_input
+      @issue_description_input = get_issue_description_input
       @issue_status_input = get_issue_status_input
+      system 'clear'
       new_issue_banner
-      puts "Project: #{@project_name_input}"
-      puts "Description: #{@issue_description_input}"
-      puts "Status: #{@issue_status_input}"
+      puts "Project name: #{@project_name_input}"
+      puts "Project description: #{@project_description_input}"
+      puts "Issue name: #{@issue_name_input}"
+      puts "Issue description: #{@issue_description_input}"
+      puts "Issue status: #{@issue_status_input}"
       @new_issue_selection['Project name'] = @project_name_input
-      @new_issue_selection['Description'] = @issue_description_input
-      @new_issue_selection['Status'] = @issue_status_input
+      @new_issue_selection['Project description'] = @project_description_input
+      @new_issue_selection['Issue name'] = @issue_name_input
+      @new_issue_selection['Issue description'] = @issue_description_input
+      @new_issue_selection['Issue status'] = @issue_status_input
       @new_issue_selection
     end
   end

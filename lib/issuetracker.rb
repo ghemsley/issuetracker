@@ -26,10 +26,12 @@ module Issuetracker
     issue_definition = cli.new_issue_selection
     issue = Issue.new
     issue.setproject(issue_definition['Project name'])
-    issue.setdescription(issue_definition['Description'])
-    issue.setstatus(issue_definition['Status'])
+    issue.setname(issue_definition['Issue name'])
+    issue.setdescription(issue_definition['Issue description'])
+    issue.setstatus(issue_definition['Issue status'])
     project = Project.new
     project.setname(issue_definition['Project name'])
+    project.setdescription(issue_definition['Project description'])
     project_hash = all_projects.projects_array.find do |element|
       element[:Name] == issue.project
     end
