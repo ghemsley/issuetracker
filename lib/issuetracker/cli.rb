@@ -83,7 +83,7 @@ module Issuetracker
       system 'clear'
       new_issue_banner
       puts 'Input a name for your project or input -p or -projects to view current projects: '
-      @project_name_input = gets.strip.capitalize
+      @project_name_input = gets.strip
       taken = @existing_projects.find do |project_element|
         project_element[:Name].downcase == @project_name_input.downcase && project_element[:Path] != @current_path
       end
@@ -107,7 +107,7 @@ module Issuetracker
       new_issue_banner
       puts "Project name: #{@project_name_input}"
       puts 'Input a description for your project:'
-      @project_description_input = gets.strip.capitalize
+      @project_description_input = gets.strip
       taken = @existing_projects.find do |project_element|
         project_element[:Description].downcase == @project_description_input.downcase && project_element[:Path] != @current_path
       end
@@ -127,7 +127,7 @@ module Issuetracker
       puts "Project name: #{@project_name_input}"
       puts "Project description: #{@project_description_input}"
       puts 'Input a name for your issue:'
-      @issue_name_input = gets.strip.capitalize
+      @issue_name_input = gets.strip
       matching = false
       @existing_projects.each do |project_element|
         matching = project_element[:Issues].find do |issue_element|
@@ -149,7 +149,7 @@ module Issuetracker
       puts "Project description: #{@project_description_input}"
       puts "Issue name: #{@issue_name_input}"
       puts 'Input a description for your issue:'
-      @issue_description_input = gets.strip.capitalize
+      @issue_description_input = gets.strip
       matching = false
       @existing_projects.each do |project_element|
         matching = project_element[:Issues].find do |issue_element|
@@ -172,7 +172,7 @@ module Issuetracker
       puts "Issue name: #{@issue_name_input}"
       puts "Issue description: #{@issue_description_input}"
       puts 'Input a status for the issue (Open/Closed/Later):'
-      @issue_status_input = gets.strip.capitalize
+      @issue_status_input = gets.strip
       unless %w[open closed later].include?(@issue_status_input.downcase)
         puts 'Please select a status of Open, Closed, or Later'
         get_issue_status_input
