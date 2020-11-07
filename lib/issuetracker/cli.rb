@@ -126,7 +126,7 @@ module Issuetracker
       new_issue_banner
       puts "Project name: #{@project_name_input}"
       puts "Project description: #{@project_description_input}"
-      puts 'Input a name for your issue:'
+      puts 'Input a short name for your issue:'
       @issue_name_input = gets.strip
       matching = false
       @existing_projects.each do |project_element|

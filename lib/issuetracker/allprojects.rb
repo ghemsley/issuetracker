@@ -11,7 +11,7 @@ module Issuetracker
   # to or from the @issues hash then appends the @issues hash to project.hash automatically, attempting to update
   # the issue numbers if necessary.
   class AllProjects
-    def initialize(path = "#{Dir.home}/.issuetracker", projects_array = [])
+    def initialize(path = "#{Dir.home}/.issuetracker.json", projects_array = [])
       @path = path
       @projects_array = projects_array
       @project_count = @projects_array.length
