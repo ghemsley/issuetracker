@@ -9,11 +9,11 @@ module Issuetracker
     # The hash object can be modified directly if specifically needed but it is still recommendeded to use
     # the setter methods whenever possible instead.
     def initialize(
-      name = 'New Issue',
-      number = 0,
-      project = 'Default project',
-      status = 'Open',
-      description = 'Description of the issue'
+      name: 'New Issue',
+      number: 0,
+      project: 'Default project',
+      status: 'Open',
+      description: 'Description of the issue'
     )
       @name = name
       @number = number

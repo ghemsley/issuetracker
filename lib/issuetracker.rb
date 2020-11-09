@@ -3,7 +3,7 @@ require 'issuetracker/cli'
 require 'issuetracker/issue'
 require 'issuetracker/fileio'
 require 'issuetracker/project'
-require 'issuetracker/allprojects'
+require 'issuetracker/path'
 module Issuetracker
   class Error < StandardError; end
   # I moved around and modified the code you had in bin/issuetracker, because that file
@@ -12,41 +12,33 @@ module Issuetracker
   # not modify bin/issuetracker much most likely, instead, program flow can be defined here
   # and specific subroutines or constants can be defined in classes or methods in the files in lib/issuetracker.
   file = FileIO.new
-  all_projects = AllProjects.new
   if File.exist?(file.path)
-    all_projects.hash = file.read_json
-    all_projects.normalize_self
+    projects_hash = file.read_json
+    Project.create_from_projects_hash(projects_hash)
   end
-  cli = CLI.new(all_projects.total_issue_count, all_projects.projects_array)
+  cli = CLI.new(
+    issue_count: Project.total_issue_count,
+    existing_projects: Project.hash[:Projects]
+  )
   cli.main_menu
   cli.main_menu_input
   main_menu_selection = cli.main_menu_selection
   if %w[n new].include?(main_menu_selection)
     cli.new_issue_menu
     issue_definition = cli.new_issue_selection
-    issue = Issue.new
-    issue.setproject(issue_definition['Project name'])
-    issue.setname(issue_definition['Issue name'])
-    issue.setdescription(issue_definition['Issue description'])
-    issue.setstatus(issue_definition['Issue status'])
-    project = Project.new
-    project.setname(issue_definition['Project name'])
-    project.setdescription(issue_definition['Project description'])
-    project_hash = all_projects.projects_array.find do |element|
-      element[:Name] == issue.project
-    end
-    if project_hash.nil?
-      project.addissue(issue.hash)
-      all_projects.addproject(project.hash)
-    else
-      project.hash = project_hash
-      project.hash[:Issues].each do |element|
-        project.addissue(element)
-      end
-      project.addissue(issue.hash)
-      all_projects.updateproject(project.hash)
-    end
-    file.hash = all_projects.hash
+    issue = Issue.new(
+      name: issue_definition['Issue name'],
+      project: issue_definition['Project name'],
+      description: issue_definition['Issue description'],
+      status: issue_definition['Issue status']
+    )
+    project = Project.create(
+      name: issue_definition['Project name'],
+      number: Project.project_count + 1,
+      description: issue_definition['Project description']
+    )
+    project.addissue(issue.hash)
+    file.hash = Project.hash
     file.write_json
   end
 end

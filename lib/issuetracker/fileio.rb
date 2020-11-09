@@ -1,4 +1,5 @@
 require 'json'
+require 'issuetracker/path'
 module Issuetracker
   class FileIO
     # This class allows converting a hash to a pretty-printed JSON format and then writing it to a file,
@@ -9,8 +10,8 @@ module Issuetracker
     # optionally be overriden to specify a custom path to read or write from.
     # While the class can be instantiated with a path or not (in which case the default will be used),
     # the methods can have that initial path be overridden by passing a new path in when the method is called.
-    def initialize(hash = {}, path = "#{Dir.home}/.issuetracker.json")
-      @hash = hash
+    def initialize(path = PATH)
+      @hash = {}
       @path = path
     end
 

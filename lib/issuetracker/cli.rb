@@ -1,13 +1,13 @@
 module Issuetracker
   class CLI
     def initialize(
-      issue_count = 0,
-      existing_projects = [],
-      project_name_input = 'Project name',
-      project_description_input = 'Project description',
-      issue_name_input = 'Issue name',
-      issue_description_input = 'Issue description',
-      issue_status_input = 'Issue status'
+      issue_count: 0,
+      existing_projects: [],
+      project_name_input: 'Project name',
+      project_description_input: 'Project description',
+      issue_name_input: 'Issue name',
+      issue_description_input: 'Issue description',
+      issue_status_input: 'Issue status'
     )
       @main_menu_selection = nil
       @new_issue_selection = {}
