@@ -1,16 +1,16 @@
 module Issuetracker
+  # This class defines the structure of the 'Issue' hash object.
+  # It initializes with default values that can be overridden by specifying ordered arguments at object instantiation.
+  # Properties can be read using code such as issue = Issue.new; status = issue.status
+  # Properties should be updated using the set methods defined in the class
+  # because these methods will properly update the hash object while trying to modify the properties
+  # directly might not.
   class Issue
-    # This class defines the structure of the 'Issue' hash object.
-    # It initializes with default values that can be overridden by specifying ordered arguments at object instantiation.
-    # Properties can be read using code such as issue = Issue.new; status = issue.status
-    # Properties should be updated using the set methods defined in the class
-    # because these methods will properly update the hash object while trying to modify the properties
-    # directly will not.
-    # The hash object can be modified directly if specifically needed but it is still recommendeded to use
-    # the setter methods whenever possible instead.
+    attr_reader :name, :number, :project, :status, :description, :issue_hash
+
     def initialize(
       name: 'New Issue',
-      number: 0,
+      number: 1,
       project: 'Default project',
       status: 'Open',
       description: 'Description of the issue'
@@ -20,35 +20,38 @@ module Issuetracker
       @project = project
       @status = status
       @description = description
-      @hash = { Name: @name, Number: @number, Project: @project, Status: @status, Description: @description }
+      @issue_hash = {
+        Name: self.name,
+        Number: self.number,
+        Project: self.project,
+        Status: self.status,
+        Description: self.description
+      }
     end
 
-    attr_accessor :hash
-    attr_reader :name, :number, :project, :status, :description
-
-    def setname(name)
+    def name=(name)
       @name = name
-      @hash[:Name] = @name
+      issue_hash[:Name] = self.name
     end
 
-    def setnumber(number)
+    def number=(number)
       @number = number
-      @hash[:Number] = @number
+      issue_hash[:Number] = self.number
     end
 
-    def setproject(project)
+    def project=(project)
       @project = project
-      @hash[:Project] = @project
+      issue_hash[:Project] = self.project
     end
 
-    def setstatus(status)
+    def status=(status)
       @status = status
-      @hash[:Status] = @status
+      issue_hash[:Status] = self.status
     end
 
-    def setdescription(description)
+    def description=(description)
       @description = description
-      @hash[:Description] = @description
+      issue_hash[:Description] = self.description
     end
   end
 end

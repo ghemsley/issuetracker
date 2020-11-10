@@ -1,5 +1,9 @@
 module Issuetracker
   class CLI
+    # This class mainly manages user input and console output
+    #
+    # This class has been reorganized to accept an issue_count variable used for displaying the total issue count,
+    # and some code has been moved to various methods to avoid repetition and having methods with tons of lines.
     def initialize(
       issue_count: 0,
       existing_projects: [],
