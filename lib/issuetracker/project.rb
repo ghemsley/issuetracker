@@ -25,65 +25,58 @@ module Issuetracker
   class Project
     @@all = []                                # All instances of the Project class
     @@path = PATH                             # Path to our .issuetracker.json file
-    @@project_count = 0                       # Total number of projects created so far
-    @@total_issue_count = 0                   # Total number of issues created so far
-    @@all_hash = {                            # A hash describing all Project hashes and some related metadata
-      Path: PATH,                             # Path to .issuetracker.json
-      Project_count: 0,                       # Total number of projects
-      Total_issue_count: 0,                   # Total number of issues
-      Projects: []                            # An array of Project hashes
-    }
-    attr_accessor :name, :number, :description, :path, :issues_array, :issue_count, :project_hash
-
+    attr_accessor :name, :number, :description, :path
     def initialize(
       name: 'Name of the project',                # Project name
-      number: 1,                                  # Project number
+      number: 1,
       description: 'Description of the project',  # Project description
-      path: Dir.pwd,                              # Project folder path
-      issues_array: []                            # An array of issues to initialize the project with
+      path: Dir.pwd                               # Project folder path
     )
       self.name = name
       self.number = number
       self.description = description
       self.path = path
-      self.issues_array = issues_array
-      self.issue_count = self.issues_array.length # Number of issues for this project
-      self.project_hash = {                       # A hash descriibing this project and containing an array of its issues
-        Name: self.name,
-        Number: self.number,
-        Description: self.description,
-        Path: self.path,
+      self.class.all.push(self)
+    end
+
+    def issues
+      Issue.all.select do |issue|
+        issue.project == self
+      end
+    end
+
+    def issue_count
+      issues.length
+    end
+
+    def issue_hashes
+      issues.collect do |issue|
+        issue.issue_hash
+      end
+    end
+
+    # A hash descriibing this project and containing an array of its issues
+    def project_hash
+      {
+        Name: name,
+        Number: number,
+        Description: description,
+        Path: path,
         Issue_count: issue_count,
-        Issues: self.issues_array
+        Issues: issue_hashes
       }
-
-      self.class.project_count += 1                                           # We are creating a project so increment the count
-      self.class.total_issue_count += issue_count                             # Increment total issue count by project issue count
-      self.class.all_hash[:Project_count] = self.class.project_count          # Update the Projects hash with the current project count
-      self.class.all_hash[:Total_issue_count] = self.class.total_issue_count  # Update the Projects hash with the current total issue count
-      self.class.all_hash[:Projects].push(project_hash)                       # Add the current Project instance'ss hash to the array of Project hashes
     end
 
-    # Expects an issue object: Adds its hash to the project's issue array and updates variables/project hash
-    def add_issue(issue_object)
-      issues_array.push(issue_object.issue_hash)
-      self.issue_count = issues_array.length
-      issue_object.number = issue_count
-      project_hash[:Issues] = issues_array
-      project_hash[:Issue_count] = issue_count
-      self.class.total_issue_count += 1
-      self.class.all_hash[:Total_issue_count] = self.class.total_issue_count
+    # Expects an issue object, returns added issue
+    def add_issue(issue)
+      issue.project = self
+      issue
     end
 
-    # Expects an issue object, adds its hash to Project instance hash and updates variables
-    def remove_issue(issue_object)
-      issues_array.delete_at(issue_object.issue_hash[:Number] - 1)
-      issue_object.issue_hash[:Number] -= 1 unless issue_object.issue_hash[:Number] < 2
-      self.issue_count = issues_array.length
-      project_hash[:Issues] = issues_array
-      project_hash[:Issue_count] = issue_count
-      self.class.total_issue_count -= 1
-      self.class.all_hash[:Total_issue_count] = self.class.total_issue_count
+    # Expects an issue object, returns removed issue
+    def remove_issue(issue)
+      issue.project = nil
+      issue
     end
 
     # An array containing all Project instances
@@ -102,65 +95,56 @@ module Issuetracker
 
     # The count of all projects
     def self.project_count
-      @@project_count
-    end
-
-    def self.project_count=(integer)
-      @@project_count = integer
+      all.length
     end
 
     # The count of all issues in all existing projects
     def self.total_issue_count
-      @@total_issue_count
-    end
-
-    def self.total_issue_count=(integer)
-      @@total_issue_count = integer
+      Issue.all.reject do |issue|
+        issue.project.nil?
+      end.length
     end
 
     # A hash containing all project hashes and related metadata
-    def self.all_hash
-      @@all_hash
+    def self.mega_hash
+      {
+        Path: path,
+        Project_count: project_count,
+        Total_issue_count: total_issue_count,
+        Projects: project_hashes
+      }
     end
 
     # Returns the array of all project hashes
-    def self.projects_hash_array
-      all_hash[:Projects]
+    def self.project_hashes
+      all.collect do |project|
+        project.project_hash
+      end
     end
 
-    # If project already exists, returns that, else creates a new Project instance and adds it to the @@all array
-    # then returns a Project instance
-    def self.create(
+    # If project already exists for path, returns that, else creates and returns a new Project instance
+    def self.find_or_create_by_path(
       name: 'Name of the project',
       number: 1,
       description: 'Description of the project',
-      path: Dir.pwd,
-      issues_array: []
+      path: Dir.pwd
     )
-      existing_project = all.find do |project_element|
-        project_element.path == path
+      existing_project = all.find do |project|
+        project.path == path
       end
-      if existing_project
-        existing_project
-      else
-        project = new(
-          name: name,
-          number: number,
-          description: description,
-          path: path,
-          issues_array: issues_array
-        )
-        all.push(project)
-        all_hash[:Project_count] = self.project_count
-        project
-      end
+      existing_project || new(
+        name: name,
+        number: number,
+        description: description,
+        path: path
+      )
     end
 
     # Keys get converted to string at file write, so convert back to symbol
     #
     # Takes in hash, returns hash with keys as symbols
     def self.normalize_hash(hash)
-      hash.transform_keys!(&:to_sym) 
+      hash.transform_keys!(&:to_sym)
       unless hash[:Projects].empty?
         hash[:Projects].each do |project|
           project.transform_keys!(&:to_sym)
@@ -172,19 +156,26 @@ module Issuetracker
       hash
     end
 
-    # Creates Project instances from issuetracker.json hash and adds all project instances to @@all array, returns @@all
-    def self.create_from_projects_hash(hash)
+    # Creates Project instances from issuetracker.json hash and adds all project instances to @@all, returns @@all
+    def self.create_from_mega_hash(hash)
       normalize_hash(hash)
-      hash[:Projects].each do |project|
-        all.push(new(
-                   name: project[:Name],
-                   number: project[:Number],
-                   description: project[:Description],
-                   path: project[:Path],
-                   issues_array: project[:Issues]
-                 ))
+      hash[:Projects].each do |project_hash|
+        project = new(
+          name: project_hash[:Name],
+          number: project_count + 1,
+          description: project_hash[:Description],
+          path: project_hash[:Path]
+        )
+        project_hash[:Issues].each do |issue_hash|
+          Issue.new(
+            name: issue_hash[:Name],
+            number: project.issue_count + 1,
+            project: project,
+            status: issue_hash[:Status],
+            description: issue_hash[:Description]
+          )
+        end
       end
-      all_hash[:Project_count] = self.project_count
       all
     end
   end

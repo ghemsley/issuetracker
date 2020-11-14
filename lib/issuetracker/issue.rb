@@ -6,52 +6,35 @@ module Issuetracker
   # because these methods will properly update the hash object while trying to modify the properties
   # directly might not.
   class Issue
-    attr_reader :name, :number, :project, :status, :description, :issue_hash
-
+    @@all = []
+    attr_accessor :name, :number, :project, :status, :description
     def initialize(
       name: 'New Issue',
       number: 1,
-      project: 'Default project',
+      project: nil,
       status: 'Open',
       description: 'Description of the issue'
     )
-      @name = name
-      @number = number
-      @project = project
-      @status = status
-      @description = description
-      @issue_hash = {
-        Name: self.name,
-        Number: self.number,
-        Project: self.project,
-        Status: self.status,
-        Description: self.description
+      self.name = name
+      self.number = number
+      self.project = project
+      self.status = status
+      self.description = description
+      self.class.all.push(self)
+    end
+
+    def issue_hash
+      {
+        Name: name,
+        Number: number,
+        Project: project.name,
+        Status: status,
+        Description: description
       }
     end
 
-    def name=(name)
-      @name = name
-      issue_hash[:Name] = self.name
-    end
-
-    def number=(number)
-      @number = number
-      issue_hash[:Number] = self.number
-    end
-
-    def project=(project)
-      @project = project
-      issue_hash[:Project] = self.project
-    end
-
-    def status=(status)
-      @status = status
-      issue_hash[:Status] = self.status
-    end
-
-    def description=(description)
-      @description = description
-      issue_hash[:Description] = self.description
+    def self.all
+      @@all
     end
   end
 end

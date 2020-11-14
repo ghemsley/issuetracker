@@ -14,22 +14,22 @@ module Issuetracker
   # While the class can be instantiated with a path or not (in which case the default will be used),
   # the methods can also have that initial path be overridden by passing a new path in when the method is called.
   class FileIO
-    attr_accessor :path, :projects_hash
+    attr_accessor :path, :mega_hash
 
     def initialize(path = PATH)
-      @projects_hash = {}
-      @path = path
+      self.mega_hash = {}
+      self.path = path
     end
 
     def read_json(path = self.path)
       self.path = path
-      self.projects_hash = JSON.parse(File.read(self.path)) if File.exist?(self.path)
-      projects_hash
+      self.mega_hash = JSON.parse(File.read(self.path)) if File.exist?(self.path)
+      mega_hash
     end
 
     def write_json(path = self.path)
       File.open(path, 'w') do |file|
-        file.write(JSON.pretty_generate(projects_hash))
+        file.write(JSON.pretty_generate(mega_hash))
       end
     end
   end
