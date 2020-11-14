@@ -14,7 +14,7 @@ module Issuetracker
   end
   cli = CLI.new(
     issue_count: Project.total_issue_count, # Instantiate a new CLI object that keeps track of the total issue count
-    existing_projects: Project.all_hash[:Projects] # Also make sure it knows about existing projects
+    existing_projects: Project.projects_hash_array # Also make sure it knows about existing projects
   )
   cli.main_menu # Show the main menu banner
   cli.main_menu_input # Ask user what menu to proceed to
