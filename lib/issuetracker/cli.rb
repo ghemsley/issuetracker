@@ -90,7 +90,7 @@ module Issuetracker
           get_project_name_input
         end
       else
-        project_name_input = existing_project[:Name]
+        self.project_name_input = existing_project[:Name]
       end
       project_name_input
     end
