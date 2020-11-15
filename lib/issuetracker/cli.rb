@@ -13,6 +13,14 @@ module Issuetracker
                   :issue_description_input,
                   :issue_status_input
 
+    def initialize
+      self.project_name_input = 'Project name'
+      self.project_description_input = 'Project Description'
+      self.issue_name_input = 'Issue name'
+      self.issue_description_input = 'Issue description'
+      self.issue_status_input = 'Open'
+    end
+
     def current_path
       Dir.pwd
     end
